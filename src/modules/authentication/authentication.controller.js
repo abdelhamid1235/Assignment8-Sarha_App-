@@ -11,12 +11,12 @@ router.post("/signup-with-gmail", async (req, res, next) => {
 })
 
 router.post("/signup",validation(validators.signup), async (req, res, next) => {
-    const data = await signup(req.validate)
+    const data = await signup(req.validate.body)
     return successResponse({ res, status: 201, data })
 })
 
 router.post("/login",validation(validators.login), async (req, res, next) => {
-    const data = await login(req.validate)
+    const data = await login(req.validate.body)
     return successResponse({ res, data })
 })
 

@@ -1,28 +1,28 @@
 import {z} from "zod";
+import { generaValidationFields } from "../../common/validation.js";
 
-export const login = z.strictObject({
-    email : z.email(),
-    password : z.string().min(8).max(20)
+export const loginSchema = (lang)=>{
+    return z.strictObject({
+    email : generaValidationFields.email(lang),
+    password : generaValidationFields.password(lang)
 })
+}
+export const login = (lang)=>{
+    return z.object({
+        body:loginSchema(lang)
+    })
+}
 
-export const signup = login.safeExtend({
-    userName:z.string(),
-    confirmPassword: z.string().min(8).max(20),
-    phone : z.e164(),
-}).superRefine((data , ctx)=>{
-    if(data.password != data.confirmPassword){
-        ctx.addIssue({
-            code : "custom",
-            path:['confirmPassword'],
-            message:"password mismatch witch confirmPassword"
-        })
-    }
+export const signup = (lang)=>{
+    return z.object({
+    body:loginSchema(lang).safeExtend({
+        userName:generaValidationFields.userName(lang),
+        confirmPassword: generaValidationFields.password(lang),
+        phone : generaValidationFields.phone(lang),
+        gender: generaValidationFields.gender(lang)
 
-    if(!data.userName.includes(" ")){
-        ctx.addIssue({
-            code : "custom",
-            path:['userName'],
-            message:"userName must contain FirstName And LastName"
-        })
-    }
+    }).superRefine((data , ctx)=>{
+        generaValidationFields.matchFields({origin:"password" , copy:"confirmPassword",data , ctx , lang})
+    })
 })
+}
