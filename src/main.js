@@ -6,7 +6,7 @@ import { PORT } from './config.js'
 import cors from 'cors'
 const app = express()
 
-bootstrap(app , PORT);
+await bootstrap(app , PORT);
 
 app.use(cors() , express.json())
 
